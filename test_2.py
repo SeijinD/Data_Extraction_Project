@@ -7,7 +7,6 @@ soup = BeautifulSoup(page.content, 'html.parser')
 links = []
 
 for index, link in enumerate(soup.find_all('a', href=lambda value: value and value.startswith("/wiki/"), title = True), start = 1):
-    links.append(str(index) + " - " + link['title'] + " - https://el.wikipedia.org" + link['href'])
-    # print(str(i) + " - " + link['title'] + " - https://el.wikipedia.org" + link['href'])       
+    links.append(str(index) + " - " + link['title'] + " - https://el.wikipedia.org" + link['href'])     
     with open("log.txt", 'a', encoding='utf8') as f:
         f.write(links[-1]+"\n")
