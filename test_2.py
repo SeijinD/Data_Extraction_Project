@@ -1,32 +1,29 @@
-# import libs
 import requests
 from bs4 import BeautifulSoup
 
-# lists for my data
-links = []
-full_hrefs = []
+links, links_href, links2_href = [], ['https://en.wikipedia.org/wiki/Mia_Khalifa'], []
+number = 2
 
-# scrap function
-def scrap(site):
-    page = requests.get(site)
-    soup = BeautifulSoup(page.content, 'html.parser')
+def scrap(links_href):
+    for link_href in links_href:
+        page = requests.get(link_href)
+        soup = BeautifulSoup(page.content, 'html.parser')
 
-    for index, link in enumerate(soup.find_all('a', href=lambda value: value and value.startswith("/wiki/"), title = True), start = 1):
-        full_href = "https://el.wikipedia.org" + link['href']
-        full_hrefs.append(full_href)
-        links.append(str(index) + " - " + link['title'] + " - " + full_href)     
-    
-    # print links list
-    with open("log.txt", 'a', encoding='utf8') as f:
-        for item in links:    
-            f.write(item +"\n")
+        for link in soup.find_all('a', href=lambda value: value and value.startswith("/wiki/"), title = True):
+            full_href = "https://en.wikipedia.org" + link['href']
+            links2_href.append(full_href)
+            links.append(link['title'] + " - " + full_href)
 
-    # run function for every link in links
-    for href in full_hrefs:
-        scrap(href)
+        links2 = list(dict.fromkeys(links))
+        links.clear()
+        with open("log.txt", 'a', encoding='utf8') as f:
+            for item in links2:    
+                f.write(item +"\n")
+    global number 
+    number -= 1
+    if number != 0:
+        links_href = list(dict.fromkeys(links2_href))
+        links2_href.clear()
+        scrap(links_href)
 
-    # clear list if finished a list
-    full_hrefs.clear()
-
-# call function      
-scrap('https://el.wikipedia.org/wiki/%CE%94%CE%B9%CE%B5%CE%B8%CE%BD%CE%AD%CF%82_%CE%A0%CE%B1%CE%BD%CE%B5%CF%80%CE%B9%CF%83%CF%84%CE%AE%CE%BC%CE%B9%CE%BF_%CF%84%CE%B7%CF%82_%CE%95%CE%BB%CE%BB%CE%AC%CE%B4%CE%BF%CF%82')
+scrap(links_href)
